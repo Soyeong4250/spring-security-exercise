@@ -1,6 +1,6 @@
 package com.hospital.review.controller;
 
-import com.hospital.review.domain.Response;
+import com.hospital.review.domain.entity.Response;
 import com.hospital.review.domain.dto.UserDto;
 import com.hospital.review.domain.dto.UserReqDto;
 import com.hospital.review.domain.dto.UserResDto;

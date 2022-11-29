@@ -7,7 +7,7 @@ package com.hospital.review.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.review.domain.dto.UserDto;
-import com.hospital.review.domain.dto.UserReqDto;
+import com.hospital.review.domain.dto.UserJoinReqDto;
 import com.hospital.review.domain.exception.ErrorCode;
 import com.hospital.review.domain.exception.HospitalReviewAppException;
 import com.hospital.review.service.UserService;
@@ -41,7 +41,7 @@ class UserRestControllerTest {
     @Test
     @DisplayName("회원가입 성공")
     void join_success() throws Exception {
-        UserReqDto userReqDto = UserReqDto.builder()
+        UserJoinReqDto userJoinReqDto = UserJoinReqDto.builder()
                 .userName("Soyeong")
                 .password("1234")
                 .email("aaaa@likelion.com")
@@ -51,7 +51,7 @@ class UserRestControllerTest {
 
         mockMvc.perform(post("/api/v1/users/join")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(userReqDto)))
+                .content(objectMapper.writeValueAsBytes(userJoinReqDto)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -59,7 +59,7 @@ class UserRestControllerTest {
     @Test
     @DisplayName("회원가입 실패")
     void join_fail() throws Exception {
-        UserReqDto userReqDto = UserReqDto.builder()
+        UserJoinReqDto userJoinReqDto = UserJoinReqDto.builder()
                 .userName("Soyeong")
                 .password("1234")
                 .email("aaaa@likelion.com")
@@ -69,7 +69,7 @@ class UserRestControllerTest {
 
         mockMvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userReqDto)))
+                        .content(objectMapper.writeValueAsBytes(userJoinReqDto)))
                 .andDo(print())
                 .andExpect(status().isConflict());
     }
@@ -98,7 +98,7 @@ package com.hospital.review.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.review.domain.dto.UserDto;
-import com.hospital.review.domain.dto.UserReqDto;
+import com.hospital.review.domain.dto.UserJoinReqDto;
 import com.hospital.review.domain.exception.ErrorCode;
 import com.hospital.review.domain.exception.HospitalReviewAppException;
 import com.hospital.review.service.UserService;
@@ -135,7 +135,7 @@ class UserRestControllerTest {
     @DisplayName("회원가입 성공")
     @WithMockUser
     void join_success() throws Exception {
-        UserReqDto userReqDto = UserReqDto.builder()
+        UserJoinReqDto userJoinReqDto = UserJoinReqDto.builder()
                 .userName("Soyeong")
                 .password("1234")
                 .email("aaaa@likelion.com")
@@ -146,7 +146,7 @@ class UserRestControllerTest {
         mockMvc.perform(post("/api/v1/users/join")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(userReqDto)))
+                .content(objectMapper.writeValueAsBytes(userJoinReqDto)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -155,7 +155,7 @@ class UserRestControllerTest {
     @DisplayName("회원가입 실패")
     @WithMockUser
     void join_fail() throws Exception {
-        UserReqDto userReqDto = UserReqDto.builder()
+        UserJoinReqDto userJoinReqDto = UserJoinReqDto.builder()
                 .userName("Soyeong")
                 .password("1234")
                 .email("aaaa@likelion.com")
@@ -166,7 +166,7 @@ class UserRestControllerTest {
         mockMvc.perform(post("/api/v1/users/join")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userReqDto)))
+                        .content(objectMapper.writeValueAsBytes(userJoinReqDto)))
                 .andDo(print())
                 .andExpect(status().isConflict());
     }

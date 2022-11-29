@@ -86,3 +86,93 @@ class UserRestControllerTest {
 **실행 결과**
 
 ![image-20221128155851331](./assets/image-20221128155851331.png)
+
+<br />
+
+### Spring Security 적용 후 UserRestControllerTest Refactoring
+
+build.gradle 에 `implementation 'org.springframework.security:spring-security-test'` 라이브러리 추가
+
+```java
+package com.hospital.review.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hospital.review.domain.dto.UserDto;
+import com.hospital.review.domain.dto.UserReqDto;
+import com.hospital.review.domain.exception.ErrorCode;
+import com.hospital.review.domain.exception.HospitalReviewAppException;
+import com.hospital.review.service.UserService;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest
+class UserRestControllerTest {
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @MockBean
+    UserService userService;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Test
+    @DisplayName("회원가입 성공")
+    @WithMockUser
+    void join_success() throws Exception {
+        UserReqDto userReqDto = UserReqDto.builder()
+                .userName("Soyeong")
+                .password("1234")
+                .email("aaaa@likelion.com")
+                .build();
+
+        when(userService.join(any())).thenReturn(mock(UserDto.class));
+
+        mockMvc.perform(post("/api/v1/users/join")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(userReqDto)))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("회원가입 실패")
+    @WithMockUser
+    void join_fail() throws Exception {
+        UserReqDto userReqDto = UserReqDto.builder()
+                .userName("Soyeong")
+                .password("1234")
+                .email("aaaa@likelion.com")
+                .build();
+
+        when(userService.join(any())).thenThrow(new HospitalReviewAppException(ErrorCode.DUPLICATED_USER_NAME, ""));
+
+        mockMvc.perform(post("/api/v1/users/join")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userReqDto)))
+                .andDo(print())
+                .andExpect(status().isConflict());
+    }
+
+}
+```
+
+- `@WebMvcTest`에서 요청을 할 때 401 Unauthorized 에러 발생 👉 `@WithMockUser`를 선언하여 권한을 같이 넘겨주어
+- `@WithMockUser`를 사용한 후  403 Forbidden 에러 발생 👉 `.wth(csrf())` 추가

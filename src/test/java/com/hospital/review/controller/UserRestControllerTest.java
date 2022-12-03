@@ -1,8 +1,10 @@
 package com.hospital.review.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.review.domain.dto.UserDto;
 import com.hospital.review.domain.dto.UserJoinReqDto;
+import com.hospital.review.domain.dto.UserLoginReqDto;
 import com.hospital.review.domain.exception.ErrorCode;
 import com.hospital.review.domain.exception.HospitalReviewAppException;
 import com.hospital.review.service.UserService;
@@ -40,6 +42,8 @@ class UserRestControllerTest {
             .password("1234")
             .email("aaaa@likelion.com")
             .build();
+    String id = "Soyoeng";
+    String password = "1234";
 
     @Test
     @DisplayName("회원가입 성공")
@@ -77,12 +81,23 @@ class UserRestControllerTest {
     }
 
     @Test
+    @DisplayName("로그인 성공")
+    @WithMockUser
+    void loging_success() throws Exception {
+        when(userService.login(any(), any())).thenReturn("token");
+
+        mockMvc.perform(post("/api/v1/users/login")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new UserLoginReqDto(id, password))))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("로그인 실패 - id 없음")
     @WithMockUser
     void login_fail1() throws Exception {
-        String id = "Soyoeng";
-        String password = "1234";
-
         // 무엇을 보내서 : id, pw
         when(userService.login(any(), any())).thenThrow(new HospitalReviewAppException(ErrorCode.NOT_FOUND, ""));
 
@@ -90,7 +105,7 @@ class UserRestControllerTest {
         mockMvc.perform(post("/api/v1/users/login")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userJoinReqDto)))
+                        .content(objectMapper.writeValueAsBytes(new UserLoginReqDto(id, password))))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -100,11 +115,13 @@ class UserRestControllerTest {
     @WithMockUser
     void login_fail2() throws Exception {
         // 무엇을 보내서 : id, pw
+        when(userService.login(any(), any())).thenThrow(new HospitalReviewAppException(ErrorCode.DUPLICATED_USER_NAME, ""));
+
         // 무엇을 받을까? : NOT_FOUND
         mockMvc.perform(post("/api/v1/users/login")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userJoinReqDto)))
+                        .content(objectMapper.writeValueAsBytes(new UserLoginReqDto(id, password))))
                 .andDo(print())
                 .andExpect(status().isConflict());
     }
@@ -114,12 +131,14 @@ class UserRestControllerTest {
     @WithMockUser
     void login_fail3() throws Exception {
         // 무엇을 보내서 : id, pw
+        when(userService.login(any(), any())).thenThrow(new HospitalReviewAppException(ErrorCode.INVALID_PASSWORD, ""));
+
         // 무엇을 받을까? : NOT_FOUND
         mockMvc.perform(post("/api/v1/users/login")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userJoinReqDto)))
+                        .content(objectMapper.writeValueAsBytes(new UserLoginReqDto(id, password))))
                 .andDo(print())
-                .andExpect(status().isConflict());
+                .andExpect(status().isUnauthorized());
     }
 }

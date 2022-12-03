@@ -48,6 +48,6 @@ public class UserService {
         }
 
         // 2가지 확인 중 예외가 없다면 Token 발행
-        return JwtTokenUtil.createToken(userName, "hello", expireTimeMs);
+        return JwtTokenUtil.createToken(userName, "secretKey", expireTimeMs);
     }
 }

@@ -1,5 +1,6 @@
 package com.hospital.review.configuration;
 
+import com.hospital.review.domain.entity.User;
 import com.hospital.review.service.UserService;
 import com.hospital.review.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -50,8 +52,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 권한 부여 정하기
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("", null, List.of(new SimpleGrantedAuthority("USER")));
+        // Token에서 Claim에서  UserName 꺼내기
+        String userName = JwtTokenUtil.getUserName(token, secretKey);
+        log.info("userName : {}", userName);
+
+        // UserDetail에서 가져오기
+        User user = userService.getUserByUserName(userName);
+        log.info("userRole: {}", userName);
+
+        // Role 바인딩
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUserName(), null, List.of(new SimpleGrantedAuthority(user.getRole().name())));
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);  // 권한 부여
         filterChain.doFilter(request, response);

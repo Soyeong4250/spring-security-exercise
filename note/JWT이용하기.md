@@ -250,8 +250,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         log.info("authorizationHeader : {}", authorizationHeader);
-		
-        // 1️⃣
+		// 1️⃣
         if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             log.error("인증헤더가 잘못 되었습니다.");
             filterChain.doFilter(request, response);
@@ -280,7 +279,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         // UserDetail에서 가져오기
         User user = userService.getUserByUserName(userName);
-        log.info("userRole: {}", userName);
+        log.info("userRole: {}", user.getRole());
 
         // Role 바인딩
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUserName(), null, List.of(new SimpleGrantedAuthority(user.getRole().name())));
@@ -289,6 +288,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+
 ```
 
 **JwtTokenUtil.java**
@@ -314,8 +314,8 @@ public class JwtTokenUtil {
     }
 
     // 2️⃣
-    public static boolean isExpired(String token, String secretkey) {
-        Date expiredDate = extractClaims(token, secretkey).getExpiration();  // expire timestamp를 return
+    public static boolean isExpired(String token, String secretKey) {
+        Date expiredDate = extractClaims(token, secretKey).getExpiration();  // expire timestamp를 return
         return expiredDate.before(new Date());  // 현재보다 전인지 check
     }
 
@@ -325,9 +325,9 @@ public class JwtTokenUtil {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expireTimeMs))
-                .signWith(SignatureAlgorithm.HS256, key)
+                .setIssuedAt(new Date(System.currentTimeMillis()))  // 발급된 시간
+                .setExpiration(new Date(System.currentTimeMillis() + expireTimeMs))  // JWT 만료시간
+                .signWith(SignatureAlgorithm.HS256, key)  // 헤더의 알고리즘, 비밀키
                 .compact()
                 ;
     }
@@ -378,8 +378,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum UserRole {
-    ADMIN("admin"),
-    USER("user");
+    ADMIN("ADMIN"),
+    USER("USER");
 
     private String name;
 }
@@ -475,3 +475,6 @@ public class ReviewRestController {
 }
 ```
 
+👉 실행 결과 - 사용자의 role과 userName이 log에 잘 찍히는 것을 볼 수 있음
+
+![image-20221205164552434](./assets/image-20221205164552434.png)

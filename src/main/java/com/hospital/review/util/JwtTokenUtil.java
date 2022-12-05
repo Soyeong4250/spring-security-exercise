@@ -16,8 +16,8 @@ public class JwtTokenUtil {
         return extractClaims(token, secretKey).get("userName", String.class);
     }
 
-    public static boolean isExpired(String token, String secretkey) {
-        Date expiredDate = extractClaims(token, secretkey).getExpiration();  // expire timestamp를 return
+    public static boolean isExpired(String token, String secretKey) {
+        Date expiredDate = extractClaims(token, secretKey).getExpiration();  // expire timestamp를 return
         return expiredDate.before(new Date());  // 현재보다 전인지 check
     }
 

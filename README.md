@@ -10,11 +10,12 @@
 
 ## 💻 구현 기능
 
-|          기능          |                            Note                            |       API Mapping        |  ex  |
-| :--------------------: | :--------------------------------------------------------: | :----------------------: | :--: |
-|        회원가입        |               [회원가입](./note/회원가입.md)               | POST /api/v1/users/join  |      |
-|     Exception 처리     |          [Exception처리](./note/Exception처리.md)          |                          |      |
-| UserRestControllerTest | [UserRestControllerTest](./note/UserRestControllerTest.md) |                          |      |
-|  Spring Security 적용  |        [Spring Security](./note/SpringSecurity.md)         |                          |      |
-|         로그인         |                  [Login](./note/Login.md)                  | POST /api/v1/users/login |      |
+|           기능           |                            Note                            |       API Mapping        |  ex  |
+| :----------------------: | :--------------------------------------------------------: | :----------------------: | :--: |
+|         회원가입         |               [회원가입](./note/회원가입.md)               | POST /api/v1/users/join  |      |
+|      Exception 처리      |          [Exception처리](./note/Exception처리.md)          |                          |      |
+|  UserRestControllerTest  | [UserRestControllerTest](./note/UserRestControllerTest.md) |                          |      |
+|   Spring Security 적용   |        [Spring Security](./note/SpringSecurity.md)         |                          |      |
+|          로그인          |                  [Login](./note/Login.md)                  | POST /api/v1/users/login |      |
+| JWT로 접근 권한 인증하기 |              [JWT 권한 부여](JWT이용하기.md)               |                          |      |
 

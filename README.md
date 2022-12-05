@@ -17,5 +17,5 @@
 |  UserRestControllerTest  | [UserRestControllerTest](./note/UserRestControllerTest.md) |                          |      |
 |   Spring Security 적용   |        [Spring Security](./note/SpringSecurity.md)         |                          |      |
 |          로그인          |                  [Login](./note/Login.md)                  | POST /api/v1/users/login |      |
-| JWT로 접근 권한 인증하기 |              [JWT 권한 부여](JWT이용하기.md)               |                          |      |
+| JWT로 접근 권한 인증하기 |           [JWT 권한 부여](./note/JWT이용하기.md)           |                          |      |
 

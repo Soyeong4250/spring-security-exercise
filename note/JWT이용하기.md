@@ -325,14 +325,28 @@ public class JwtTokenUtil {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setIssuedAt(new Date(System.currentTimeMillis()))  // 발급된 시간
-                .setExpiration(new Date(System.currentTimeMillis() + expireTimeMs))  // JWT 만료시간
-                .signWith(SignatureAlgorithm.HS256, key)  // 헤더의 알고리즘, 비밀키
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expireTimeMs))
+                .signWith(SignatureAlgorithm.HS256, key) 
                 .compact()
                 ;
     }
 }
 ```
+
+- JWT Token 생성 시 필요한 것들
+
+  👉 Claims - userName, 좌석 어디 등 인증하기 위해 필요한 덜 민감한 정보들
+
+  👉 IssuesAt - Token 발급 시간
+
+  👉 Expiration - Token 만료 시간
+
+  👉 signWith - 어떤 secretKey로 서명할 것인지 (헤더의 알고리즘, 비밀키 등을 포함)
+
+- `private static Claims extractClaims(String token, String key) {
+          return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
+      }` 를 통해 secretKey를 가져와 인증
 
 **User.java**
 

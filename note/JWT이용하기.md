@@ -492,3 +492,7 @@ public class ReviewRestController {
 👉 실행 결과 - 사용자의 role과 userName이 log에 잘 찍히는 것을 볼 수 있음
 
 ![image-20221205164552434](./assets/image-20221205164552434.png)
+
+👉 토큰이 만료된 경우 - ExpiredJwtException 발생
+
+![image-20221206144302164](./assets/image-20221206144302164.png)
